@@ -6,48 +6,39 @@ import os
 app = Flask(__name__, static_folder="")
 CORS(app)
 
-# === ОТДАЧА ФОРМЫ ===
+# === СТАТИЧЕСКИЙ ФАЙЛ (ФОРМА) ===
 @app.route("/")
 def index():
     return send_from_directory(os.path.dirname(os.path.abspath(__file__)), "lead_form.html")
+
 
 # === ОТПРАВКА ЛИДА В CRM ===
 @app.route("/send_lead", methods=["POST"])
 def send_lead():
     data = request.json
 
-    # Получение IP клиента
+    # IP клиента
     ip = request.headers.get("X-Forwarded-For", request.remote_addr)
-    if ip is None or ip.strip() == "":
-        ip = "127.0.0.1"
+    if ip in ["127.0.0.1", "0.0.0.0", "::1"]:
+        ip = "8.8.8.8"
 
-    crm_url = "https://stormchg.biz/api/external/integration/lead"
-
+    # === НОВАЯ CRM: данные, которые ты дал ===
+    crm_url = "https://elvioncrm62.pro/api/add_lead"
     headers = {
         "Content-Type": "application/json",
-        "x-api-key": "a9e96a13-9d82-465c-a111-085b94756b81"
+        "api-key": "gnG4ILxVgUPdmAtpqjUH2DlUoJKRN0JK"
     }
 
+    # === Формируем payload ===
     payload = {
-        "affc": "AFF-7HXBU5456B",
-        "bxc": "BX-6MWDHF8F519II",
-        "vtc": "VT-HP8XSRMKVS6E7",
-
-        "profile": {
-            "firstName": data.get("name", ""),
-            "lastName": data.get("lastname", ""),
-            "email": data.get("email", ""),
-            "password": "AutoGen123!",
-            "phone": data.get("phone", "").replace("+", "").replace(" ", "").replace("-", "")
-        },
-
-        "ip": ip,
-        "funnel": "kaz_atom",
-        "landingURL": "https://walloram.onrender.com",
+        "first_name": data.get("name", ""),
+        "last_name": data.get("lastname", ""),
+        "email": data.get("email", ""),
+        "phone": data.get("phone", "").replace("+", "").replace(" ", "").replace("-", ""),
         "geo": "KZ",
-        "lang": "ru",
-        "landingLang": "ru",
-        "userAgent": request.headers.get("User-Agent", "")
+        "ip": ip,
+        "landing_url": "https://punk2077.onrender.com",
+        "sub_id": None
     }
 
     try:
@@ -63,4 +54,4 @@ def send_lead():
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(host="0.0.0.0", port=port)
