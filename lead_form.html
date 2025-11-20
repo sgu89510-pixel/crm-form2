@@ -77,10 +77,10 @@ document.getElementById("leadForm").addEventListener("submit", async function(e)
     };
 
     const responseBox = document.getElementById("result");
-    responseBox.innerHTML = "Отправка...";
+    responseBox.innerHTML = "⏳ Отправка...";
 
     try {
-        const res = await fetch("/submit", {
+        const res = await fetch("/send_lead", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data)
