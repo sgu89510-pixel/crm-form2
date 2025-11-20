@@ -6,43 +6,39 @@ import os
 app = Flask(__name__, static_folder="")
 CORS(app)
 
-# === СТАТИЧЕСКИЙ ФАЙЛ (ФОРМА) ===
+# ОТДАТЬ ФОРМУ
 @app.route("/")
 def index():
     return send_from_directory(os.path.dirname(os.path.abspath(__file__)), "lead_form.html")
 
-
-# === ОТПРАВКА ЛИДА В CRM ===
+# ОТПРАВКА ЛИДА
 @app.route("/send_lead", methods=["POST"])
 def send_lead():
     data = request.json
 
-    # IP клиента
+    # Получаем IP (необязательно, но можно)
     ip = request.headers.get("X-Forwarded-For", request.remote_addr)
-    if ip in ["127.0.0.1", "0.0.0.0", "::1"]:
-        ip = "8.8.8.8"
 
-    # === НОВАЯ CRM: данные, которые ты дал ===
-    crm_url = "https://elvioncrm62.pro/api/add_lead"
+    url = "https://elvioncrm62.pro/api/add_lead"
+
     headers = {
         "Content-Type": "application/json",
-        "api-key": "gnG4ILxVgUPdmAtpqjUH2DlUoJKRN0JK"
+        "x-api-key": "gnG4ILxVgUPdmAtpqjUH2DlUoJKRN0JK"
     }
 
-    # === Формируем payload ===
     payload = {
-        "first_name": data.get("name", ""),
-        "last_name": data.get("lastname", ""),
+        "name": f"{data.get('firstname', '')} {data.get('lastname', '')}".strip(),
         "email": data.get("email", ""),
-        "phone": data.get("phone", "").replace("+", "").replace(" ", "").replace("-", ""),
-        "geo": "KZ",
-        "ip": ip,
-        "landing_url": "https://punk2077.onrender.com",
-        "sub_id": None
+        "phone": data.get("phone", "").replace("+", "").replace(" ", ""),
+        "country": "KZ",
+        "language": "RU",
+        "source": "Kazakhstan Landing",
+        "source_url": "https://punk2077.onrender.com",
+        "comment": f"Lead from landing. IP: {ip}"
     }
 
     try:
-        response = requests.post(crm_url, headers=headers, json=payload, timeout=30)
+        response = requests.post(url, headers=headers, json=payload, timeout=20)
         return jsonify({
             "crm_response": response.text,
             "crm_status": response.status_code,
@@ -50,7 +46,6 @@ def send_lead():
         })
     except Exception as e:
         return jsonify({"error": str(e), "success": False})
-
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
