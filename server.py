@@ -1,52 +1,50 @@
 from flask import Flask, request, jsonify, send_from_directory
-from flask_cors import CORS
 import requests
 import os
 
-app = Flask(__name__, static_folder="")
-CORS(app)
+app = Flask(__name__)
 
-# ОТДАТЬ ФОРМУ
 @app.route("/")
 def index():
-    return send_from_directory(os.path.dirname(os.path.abspath(__file__)), "lead_form.html")
+    return send_from_directory("", "lead_form.html")
 
-# ОТПРАВКА ЛИДА
-@app.route("/send_lead", methods=["POST"])
-def send_lead():
-    data = request.json
-
-    # Получаем IP (необязательно, но можно)
-    ip = request.headers.get("X-Forwarded-For", request.remote_addr)
-
-    url = "https://elvioncrm62.pro/api/add_lead"
-
-    headers = {
-        "Content-Type": "application/json",
-        "x-api-key": "gnG4ILxVgUPdmAtpqjUH2DlUoJKRN0JK"
-    }
-
-    payload = {
-        "name": f"{data.get('firstname', '')} {data.get('lastname', '')}".strip(),
-        "email": data.get("email", ""),
-        "phone": data.get("phone", "").replace("+", "").replace(" ", ""),
-        "country": "KZ",
-        "language": "RU",
-        "source": "Kazakhstan Landing",
-        "source_url": "https://punk2077.onrender.com",
-        "comment": f"Lead from landing. IP: {ip}"
-    }
-
+@app.route("/submit", methods=["POST"])
+def submit():
     try:
-        response = requests.post(url, headers=headers, json=payload, timeout=20)
+        data = request.form.to_dict()
+
+        if not data:
+            return jsonify({"success": False, "error": "Нет данных"}), 400
+
+        # CRM payload
+        payload = {
+            'name': data.get('name'),
+            'country': data.get('country'),
+            'phone': data.get('phone'),
+            'car_year': data.get('car_year'),
+            'comment': data.get('comment')
+        }
+
+        CRM_URL = "http://144.124.251.253/api/v1/Lead"
+
+        headers = {
+            "Content-Type": "application/json",
+            "X-Api-Key": "10e0980f940ad36c2eb03b5f80f70e1d"
+        }
+
+        response = requests.post(CRM_URL, json=payload, headers=headers, timeout=20)
+
         return jsonify({
-            "crm_response": response.text,
+            "success": True,
             "crm_status": response.status_code,
-            "success": response.ok
+            "crm_response": response.text,
+            "sent_payload": payload
         })
+
     except Exception as e:
-        return jsonify({"error": str(e), "success": False})
+        return jsonify({"success": False, "error": str(e)}), 500
+
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
+    port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
