@@ -8,29 +8,26 @@ app = Flask(__name__)
 def index():
     return send_from_directory("", "lead_form.html")
 
-@app.route("/submit", methods=["POST"])
-def submit():
+
+@app.route("/send_lead", methods=["POST"])
+def send_lead():
     try:
-        data = request.form.to_dict()
+        data = request.get_json()
 
         if not data:
             return jsonify({"success": False, "error": "Нет данных"}), 400
 
-        # CRM payload
         payload = {
-            'name': data.get('name'),
-            'country': data.get('country'),
-            'phone': data.get('phone'),
-            'car_year': data.get('car_year'),
-            'comment': data.get('comment')
+            "name": data.get("name"),
+            "country": data.get("country"),
+            "phone": data.get("phone"),
+            "car_year": data.get("car_year"),
+            "comment": data.get("comment")
         }
 
-        CRM_URL = "http://144.124.251.253/api/v1/Lead"
+        CRM_URL = "http://144.124.251.253/lead_capture.php"
 
-        headers = {
-            "Content-Type": "application/json",
-            "X-Api-Key": "10e0980f940ad36c2eb03b5f80f70e1d"
-        }
+        headers = {"Content-Type": "application/json"}
 
         response = requests.post(CRM_URL, json=payload, headers=headers, timeout=20)
 
@@ -42,7 +39,7 @@ def submit():
         })
 
     except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
+        return jsonify({"success": False, "error": str(e)})
 
 
 if __name__ == "__main__":
