@@ -2,61 +2,58 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Регистрация</title>
-<style>
-body { background:#f2f2f2; font-family:Arial; }
-form { width:400px; margin:50px auto; background:#fff; padding:25px; border-radius:10px; }
-input, button { width:100%; padding:12px; margin-top:10px; font-size:16px; }
-button { background:#007bff; color:#fff; border:none; cursor:pointer; }
-#result { margin-top:15px; font-size:18px; text-align:center; }
-</style>
+<title>Форма заявки</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
+<h2>Форма заявки</h2>
+
 <form id="leadForm">
-    <input type="text" id="firstname" placeholder="Имя" required>
-    <input type="text" id="lastname" placeholder="Фамилия" required>
-    <input type="email" id="email" placeholder="Email" required>
-    <input type="text" id="phone" placeholder="+7700XXXXXXX" required>
+    Имя:<br>
+    <input type="text" name="name" required><br><br>
+
+    Страна:<br>
+    <select name="country" required>
+        <option value="США">США</option>
+        <option value="Китай">Китай</option>
+        <option value="Европа">Европа</option>
+    </select><br><br>
+
+    Телефон:<br>
+    <input type="text" name="phone" required placeholder="+7700XXXXXXX"><br><br>
+
+    Год авто:<br>
+    <select name="car_year" required>
+        <script>
+            for (let y = 2025; y >= 2013; y--) {
+                document.write(`<option value="${y}">${y}</option>`);
+            }
+        </script>
+    </select><br><br>
+
+    Комментарий:<br>
+    <textarea name="comment"></textarea><br><br>
+
     <button type="submit">Отправить</button>
-    <div id="result"></div>
 </form>
+
+<p id="result"></p>
 
 <script>
 document.getElementById("leadForm").addEventListener("submit", async function(e) {
     e.preventDefault();
 
-    const data = {
-        firstname: document.getElementById("firstname").value.trim(),
-        lastname: document.getElementById("lastname").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        phone: document.getElementById("phone").value.trim()
-    };
+    const form = e.target;
+    const formData = new FormData(form);
 
-    const resBox = document.getElementById("result");
-    resBox.innerHTML = "Отправляем...";
+    const res = await fetch("/submit", {
+        method: "POST",
+        body: formData
+    });
 
-    try {
-        const res = await fetch("/send_lead", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        });
-
-        const json = await res.json();
-
-        if (json.success) {
-            resBox.style.color = "green";
-            resBox.innerHTML = "✓ Лид успешно отправлен!";
-        } else {
-            resBox.style.color = "red";
-            resBox.innerHTML = "✖ Ошибка: " + (json.error || json.crm_response);
-        }
-
-    } catch(err) {
-        resBox.style.color = "red";
-        resBox.innerHTML = "✖ Ошибка соединения";
-    }
+    const json = await res.json();
+    document.getElementById("result").innerText = "Ответ CRM: " + JSON.stringify(json);
 });
 </script>
 
