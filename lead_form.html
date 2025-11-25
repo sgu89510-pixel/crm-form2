@@ -10,6 +10,7 @@
 <h2>Форма заявки</h2>
 
 <form id="leadForm">
+
     Имя:<br>
     <input type="text" name="name" required><br><br>
 
@@ -18,15 +19,16 @@
         <option value="США">США</option>
         <option value="Китай">Китай</option>
         <option value="Европа">Европа</option>
+        <option value="Россия">Россия</option>
     </select><br><br>
 
-    Телефон:<br>
-    <input type="text" name="phone" required placeholder="+7700XXXXXXX"><br><br>
+    Номер телефона:<br>
+    <input type="text" name="phone" placeholder="+79001234567" required><br><br>
 
     Год авто:<br>
     <select name="car_year" required>
         <script>
-            for (let y = 2025; y >= 2013; y--) {
+            for (let y = 2013; y <= 2025; y++) {
                 document.write(`<option value="${y}">${y}</option>`);
             }
         </script>
@@ -45,11 +47,19 @@ document.getElementById("leadForm").addEventListener("submit", async function(e)
     e.preventDefault();
 
     const form = e.target;
-    const formData = new FormData(form);
 
-    const res = await fetch("/submit", {
+    const data = {
+        name: form.name.value,
+        country: form.country.value,
+        phone: form.phone.value,
+        car_year: form.car_year.value,
+        comment: form.comment.value
+    };
+
+    const res = await fetch("/send_lead", {
         method: "POST",
-        body: formData
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
     });
 
     const json = await res.json();
