@@ -41,7 +41,7 @@ def submit():
             "password": "hF7{koC1)p"
         }
 
-        TRACK_URL = "https://track.fintechgurus.org/postback/lead"
+        TRACK_URL = "https://track.fintechgurus.org/api/v2/lead/create"
 
         response = requests.post(TRACK_URL, data=payload, timeout=20)
 
