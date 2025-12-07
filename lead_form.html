@@ -2,42 +2,27 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Форма заявки</title>
+<title>Lead Form</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
-<h2>Форма заявки</h2>
+<h2>Lead Form</h2>
 
 <form id="leadForm">
+    First Name:<br>
+    <input type="text" name="firstname" required><br><br>
 
-    Имя:<br>
-    <input type="text" name="name" required><br><br>
+    Last Name:<br>
+    <input type="text" name="lastname" required><br><br>
 
-    Страна:<br>
-    <select name="country" required>
-        <option value="США">США</option>
-        <option value="Китай">Китай</option>
-        <option value="Европа">Европа</option>
-        <option value="Россия">Россия</option>
-    </select><br><br>
+    Email:<br>
+    <input type="email" name="email" required><br><br>
 
-    Номер телефона:<br>
-    <input type="text" name="phone" placeholder="+79001234567" required><br><br>
+    Phone:<br>
+    <input type="text" name="phone" required placeholder="+7XXXXXXXXXX"><br><br>
 
-    Год авто:<br>
-    <select name="car_year" required>
-        <script>
-            for (let y = 2013; y <= 2025; y++) {
-                document.write(`<option value="${y}">${y}</option>`);
-            }
-        </script>
-    </select><br><br>
-
-    Комментарий:<br>
-    <textarea name="comment"></textarea><br><br>
-
-    <button type="submit">Отправить</button>
+    <button type="submit">Send</button>
 </form>
 
 <p id="result"></p>
@@ -47,23 +32,17 @@ document.getElementById("leadForm").addEventListener("submit", async function(e)
     e.preventDefault();
 
     const form = e.target;
+    const data = new FormData(form);
 
-    const data = {
-        name: form.name.value,
-        country: form.country.value,
-        phone: form.phone.value,
-        car_year: form.car_year.value,
-        comment: form.comment.value
-    };
-
-    const res = await fetch("/send_lead", {
+    const res = await fetch("/submit", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(data)
+        body: data
     });
 
     const json = await res.json();
-    document.getElementById("result").innerText = "Ответ CRM: " + JSON.stringify(json);
+
+    document.getElementById("result").innerText =
+        "CRM Response: " + JSON.stringify(json);
 });
 </script>
 
