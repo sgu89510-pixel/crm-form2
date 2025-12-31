@@ -28,7 +28,7 @@ def submit():
         "Phone": request.form.get("phone"),
         "Password": generate_password(),
         "Country": "RU",
-        "Source": "Landing RU",
+        "Source": "tbank1",
         "Token": API_TOKEN
     }
 
