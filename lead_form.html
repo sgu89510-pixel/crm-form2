@@ -1,50 +1,84 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<title>Lead Form</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>Заполнить форму</title>
+    <style>
+        body {
+            background: #0e0e0e;
+            font-family: Arial, sans-serif;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form-box {
+            background: #111;
+            padding: 30px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 0 20px rgba(0,255,204,0.25);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #00ffcc;
+        }
+
+        label {
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 6px 0 15px 0;
+            border-radius: 5px;
+            border: none;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #00ffcc;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #00e6b8;
+        }
+    </style>
 </head>
 <body>
 
-<h2>Lead Form</h2>
+<div class="form-box">
+    <h2>Заполнить форму</h2>
 
-<form id="leadForm">
-    First Name:<br>
-    <input type="text" name="firstname" required><br><br>
+    <form action="/submit" method="POST">
+        <label>Имя</label>
+        <input type="text" name="first_name" required>
 
-    Last Name:<br>
-    <input type="text" name="lastname" required><br><br>
+        <label>Фамилия</label>
+        <input type="text" name="last_name" required>
 
-    Email:<br>
-    <input type="email" name="email" required><br><br>
+        <label>Email</label>
+        <input type="email" name="email" required>
 
-    Phone:<br>
-    <input type="text" name="phone" required placeholder="+7XXXXXXXXXX"><br><br>
+        <label>Телефон</label>
+        <input type="tel" name="phone" placeholder="+79998887766" required>
 
-    <button type="submit">Send</button>
-</form>
-
-<p id="result"></p>
-
-<script>
-document.getElementById("leadForm").addEventListener("submit", async function(e) {
-    e.preventDefault();
-
-    const form = e.target;
-    const data = new FormData(form);
-
-    const res = await fetch("/submit", {
-        method: "POST",
-        body: data
-    });
-
-    const json = await res.json();
-
-    document.getElementById("result").innerText =
-        "CRM Response: " + JSON.stringify(json);
-});
-</script>
+        <button type="submit">Отправить</button>
+    </form>
+</div>
 
 </body>
 </html>
