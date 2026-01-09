@@ -5,7 +5,7 @@
     <title>Заполнить форму</title>
     <style>
         body {
-            background: #0e0e0e;
+            background: linear-gradient(135deg, #1b0033, #000814);
             font-family: Arial, sans-serif;
             color: #ffffff;
             display: flex;
@@ -14,19 +14,25 @@
             height: 100vh;
         }
 
-        .form-box {
-            background: #111;
+        .box {
+            background: rgba(0,0,0,0.7);
             padding: 30px;
-            border-radius: 10px;
+            border-radius: 12px;
             width: 100%;
-            max-width: 400px;
-            box-shadow: 0 0 20px rgba(0,255,204,0.25);
+            max-width: 420px;
+            box-shadow: 0 0 25px rgba(0,255,204,0.3);
         }
 
         h2 {
             text-align: center;
-            margin-bottom: 20px;
             color: #00ffcc;
+            margin-bottom: 10px;
+        }
+
+        p {
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 20px;
         }
 
         label {
@@ -35,33 +41,41 @@
 
         input {
             width: 100%;
-            padding: 10px;
-            margin: 6px 0 15px 0;
-            border-radius: 5px;
+            padding: 11px;
+            margin: 6px 0 15px;
+            border-radius: 6px;
             border: none;
             font-size: 14px;
         }
 
         button {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             background: #00ffcc;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             font-size: 16px;
-            cursor: pointer;
             font-weight: bold;
+            cursor: pointer;
         }
 
         button:hover {
             background: #00e6b8;
         }
+
+        .bonus {
+            margin-top: 15px;
+            text-align: center;
+            color: #00ffcc;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-<div class="form-box">
+<div class="box">
     <h2>Заполнить форму</h2>
+    <p>Оставьте заявку и получите <b>$3 сразу</b> для старта</p>
 
     <form action="/submit" method="POST">
         <label>Имя</label>
@@ -76,8 +90,10 @@
         <label>Телефон</label>
         <input type="tel" name="phone" placeholder="+79998887766" required>
 
-        <button type="submit">Отправить</button>
+        <button type="submit">Отправить заявку</button>
     </form>
+
+    <div class="bonus">🎁 Бонус $3 для новых участников</div>
 </div>
 
 </body>
