@@ -10,7 +10,7 @@ API_BASE_URL = "https://void-handler.top/api"
 API_ENDPOINT = "/leads"   # стандартный endpoint LeadRouter
 API_TOKEN = "53|MLBozB6YD3C63mP8hNarOUI1dVdssXhTKiJjmg2f586921b1"
 
-OFFER_ID = 6
+OFFER_ID = "6"
 CAMPAIGN_ID = "tbank"
 
 def generate_password():
