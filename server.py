@@ -6,11 +6,14 @@ import json
 
 app = Flask(__name__)
 
-API_URL = "https://affs-lead.info/lion/new-lead"
-API_TOKEN = "Q9T2A6kM8yJwC0D5F4pN7S1uLRHb"
+API_BASE_URL = "https://void-handler.top/api"
+API_ENDPOINT = "/leads"   # стандартный endpoint LeadRouter
+API_TOKEN = "53|MLBozB6YD3C63mP8hNarOUI1dVdssXhTKiJjmg2f586921b1"
+
+OFFER_ID = 6
+CAMPAIGN_ID = "tbank"
 
 def generate_password():
-    # минимум 10 символов (буквы + цифры)
     return ''.join(random.choices(string.ascii_letters + string.digits, k=10))
 
 @app.route("/")
@@ -20,20 +23,30 @@ def index():
 @app.route("/submit", methods=["POST"])
 def submit():
 
-    # ДАННЫЕ ДЛЯ CRM (СТРОГО ПО ДОКУМЕНТАЦИИ)
     payload = {
-        "Name": request.form.get("first_name"),
-        "LastName": request.form.get("last_name"),
-        "Email": request.form.get("email"),
-        "Phone": request.form.get("phone"),
-        "Password": generate_password(),
-        "Country": "RU",
-        "Source": "tbank1",
-        "Token": API_TOKEN
+        "offer_id": OFFER_ID,
+        "campaign_id": CAMPAIGN_ID,
+        "first_name": request.form.get("first_name"),
+        "last_name": request.form.get("last_name"),
+        "email": request.form.get("email"),
+        "phone": request.form.get("phone"),
+        "country": "RU",
+        "password": generate_password()
+    }
+
+    headers = {
+        "Authorization": f"Bearer {API_TOKEN}",
+        "Accept": "application/json"
     }
 
     try:
-        response = requests.post(API_URL, data=payload, timeout=15)
+        response = requests.post(
+            API_BASE_URL + API_ENDPOINT,
+            data=payload,
+            headers=headers,
+            timeout=15
+        )
+
         try:
             crm_response = response.json()
         except:
@@ -42,9 +55,8 @@ def submit():
     except Exception as e:
         return f"<pre>Request error:\n{str(e)}</pre>", 500
 
-    # 🔒 Маскируем токен для отображения
     safe_payload = payload.copy()
-    safe_payload["Token"] = "********"
+    safe_headers = {"Authorization": "Bearer ********"}
 
     return f"""
     <html>
@@ -53,26 +65,27 @@ def submit():
         <title>CRM Debug</title>
         <style>
             body {{
+                background:#0e0e0e;
+                color:#00ffcc;
                 font-family: monospace;
-                background: #0e0e0e;
-                color: #00ffcc;
-                padding: 20px;
+                padding:20px;
             }}
             pre {{
-                background: #000;
-                padding: 15px;
-                border-radius: 6px;
-                border: 1px solid #00ffcc;
+                background:#000;
+                padding:15px;
+                border-radius:6px;
+                border:1px solid #00ffcc;
             }}
-            h2 {{
-                color: #ffffff;
-            }}
+            h2 {{ color:#fff; }}
         </style>
     </head>
     <body>
 
-        <h2>📤 REQUEST TO CRM</h2>
+        <h2>📤 REQUEST</h2>
         <pre>{json.dumps(safe_payload, indent=2, ensure_ascii=False)}</pre>
+
+        <h2>🔐 HEADERS</h2>
+        <pre>{json.dumps(safe_headers, indent=2)}</pre>
 
         <h2>📥 CRM RESPONSE</h2>
         <pre>{json.dumps(crm_response, indent=2, ensure_ascii=False)}</pre>
