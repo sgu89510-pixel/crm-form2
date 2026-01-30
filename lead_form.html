@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Заполнить форму</title>
+</head>
+<body>
+
+<h2>Заполнить форму</h2>
+
+<form method="POST" action="/submit">
+    <input name="first_name" placeholder="Имя" required minlength="3"><br><br>
+    <input name="last_name" placeholder="Фамилия" required minlength="3"><br><br>
+    <input name="email" type="email" placeholder="Email" required><br><br>
+    <input name="phone" placeholder="Телефон (KZ)" required><br><br>
+
+    <button type="submit">Отправить</button>
+</form>
+
+</body>
+</html>
